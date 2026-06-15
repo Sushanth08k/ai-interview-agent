@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from app.routes.search import router as search_router
 from app.routes.auth import router as auth_router
 from app.routes.notes import router as notes_router
 
@@ -22,3 +22,9 @@ def home():
     return {
         "message": "AI Interview Agent Running"
     }
+
+app.include_router(
+    search_router,
+    prefix="/search",
+    tags=["Search"]
+)

@@ -4,6 +4,7 @@ import uuid
 from app.rag.chunking import chunk_text
 from fastapi import Depends
 from app.dependencies.auth_dependency import get_current_user
+from app.rag.vector_store import store_chunks
 
 from app.database.mongodb import notes_collection
 from app.utils.pdf_utils import extract_text_from_pdf
@@ -22,7 +23,17 @@ async def upload_note(
     file: UploadFile = File(...),
     current_user=Depends(get_current_user)
 ):
+    existing_note = notes_collection.find_one(
+        {
+            "user_email": current_user["email"],
+            "filename": file.filename
+        }
+    )
 
+    if existing_note:
+        return {
+            "message": "File already uploaded"
+        }
     # Generate unique filename
     unique_filename = (
         str(uuid.uuid4()) + ".pdf"
@@ -47,6 +58,16 @@ async def upload_note(
     )
     chunks = chunk_text(text)
 
+    store_chunks(
+        chunks,
+        {
+            "user_email":
+            current_user["email"],
+
+            "filename":
+            file.filename
+        }
+    )
     # Delete temporary PDF
     os.remove(filepath)
 
