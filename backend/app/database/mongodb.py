@@ -4,11 +4,14 @@ import os
 
 load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+client = MongoClient(
+    os.getenv("MONGO_URI")
+)
 
-client = MongoClient(MONGO_URI)
-
-db = client[DATABASE_NAME]
+db = client[
+    os.getenv("DATABASE_NAME")
+]
 
 users_collection = db["users"]
+
+notes_collection = db["notes"]
