@@ -15,3 +15,5 @@ db = client[
 users_collection = db["users"]
 
 notes_collection = db["notes"]
+
+interviews_collection = db["interviews"]

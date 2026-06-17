@@ -4,6 +4,8 @@ from app.routes.auth import router as auth_router
 from app.routes.notes import router as notes_router
 from app.routes.ask import router as ask_router
 from app.routes.question_generator import router as question_router
+from app.routes.interview import router as interview_router
+
 
 app = FastAPI()
 
@@ -41,4 +43,10 @@ app.include_router(
     question_router,
     prefix="/generate-questions",
     tags=["Question Generator"]
+)
+
+app.include_router(
+    interview_router,
+    prefix="/interview",
+    tags=["Interview"]
 )
