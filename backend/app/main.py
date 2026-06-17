@@ -3,7 +3,7 @@ from app.routes.search import router as search_router
 from app.routes.auth import router as auth_router
 from app.routes.notes import router as notes_router
 from app.routes.ask import router as ask_router
-
+from app.routes.question_generator import router as question_router
 
 app = FastAPI()
 
@@ -35,4 +35,10 @@ app.include_router(
     ask_router,
     prefix="/ask",
     tags=["Ask AI"]
+)
+
+app.include_router(
+    question_router,
+    prefix="/generate-questions",
+    tags=["Question Generator"]
 )
