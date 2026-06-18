@@ -232,3 +232,93 @@ Do not repeat previous questions.
         "average_score":
         round(avg_score, 2)
     }
+
+@router.post("/end")
+def end_interview(
+    current_user=Depends(get_current_user)
+):
+
+    session = interviews_collection.find_one(
+        {
+            "user_email": current_user["email"],
+            "status": "active"
+        }
+    )
+
+    if not session:
+        return {
+            "message": "No active interview found"
+        }
+
+    questions_answered = session.get(
+        "questions_answered",
+        0
+    )
+
+    total_score = session.get(
+        "total_score",
+        0
+    )
+
+    average_score = 0
+
+    if questions_answered > 0:
+        average_score = (
+            total_score /
+            questions_answered
+        )
+
+    summary_prompt = f"""
+You are an interview coach.
+
+Interview Statistics:
+
+Questions Answered:
+{questions_answered}
+
+Total Score:
+{total_score}
+
+Average Score:
+{average_score}
+
+Generate:
+
+1. Performance Summary
+2. Strengths
+3. Areas for Improvement
+
+Keep the response concise.
+"""
+
+    summary = llm.invoke(
+        summary_prompt
+    )
+
+    interviews_collection.update_one(
+        {
+            "_id": session["_id"]
+        },
+        {
+            "$set": {
+                "status": "completed"
+            }
+        }
+    )
+
+    return {
+        "questions_answered":
+        questions_answered,
+
+        "total_score":
+        total_score,
+
+        "average_score":
+        round(
+            average_score,
+            2
+        ),
+
+        "summary":
+        summary.content
+    }
