@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-
+import re
 from app.dependencies.auth_dependency import get_current_user
 from app.rag.vector_store import search_chunks
 from app.ai.llm import llm
@@ -77,7 +77,8 @@ Context:
         "current_question": response.content,
         "questions_answered": 0,
         "total_score": 0,
-        "status": "active"
+        "status": "active",
+        "history": []
     }
 
     interviews_collection.insert_one(session)
@@ -99,6 +100,11 @@ def submit_answer(
             "status": "active"
         }
     )
+
+    if session["questions_answered"] >= 5:
+        return {
+            "message": "Interview completed. Please end the interview."
+        }
 
     if not session:
         return {
@@ -154,7 +160,15 @@ Suggestions:
     # Later we will extract actual score using regex.
     # For now keep default score.
 
-    score = 7
+    match = re.search(
+        r"Score:\s*(\d+)",
+        evaluation.content
+    )
+
+    if match:
+        score = int(match.group(1))
+    else:
+        score = 0
 
     topic = session["topic"]
 
@@ -170,6 +184,20 @@ Suggestions:
         documents
     )
 
+    asked_questions = []
+
+    for item in session.get(
+        "history",
+        []
+    ):
+        asked_questions.append(
+            item["question"]
+        )
+
+    previous_questions = "\n".join(
+        asked_questions
+    )
+
     next_question_prompt = f"""
 You are a technical interviewer.
 
@@ -181,9 +209,16 @@ Topic:
 Context:
 {context}
 
-Do not repeat previous questions.
-"""
+Previously Asked Questions:
+{previous_questions}
 
+Rules:
+- Ask only one question.
+- Do not provide the answer.
+- Do not repeat previous questions.
+- Make it interview level.
+"""
+    
     next_question = llm.invoke(
         next_question_prompt
     )
@@ -197,9 +232,18 @@ Do not repeat previous questions.
                 "current_question":
                 next_question.content
             },
+
             "$inc": {
                 "questions_answered": 1,
                 "total_score": score
+            },
+
+            "$push": {
+                "history": {
+                    "question": question,
+                    "answer": request.answer,
+                    "score": score
+                }
             }
         }
     )
@@ -321,4 +365,109 @@ Keep the response concise.
 
         "summary":
         summary.content
+    }
+
+@router.get("/analytics")
+def interview_analytics(
+    current_user=Depends(get_current_user)
+):
+
+    session = interviews_collection.find_one(
+        {
+            "user_email": current_user["email"]
+        },
+        sort=[
+            ("questions_answered", -1)
+        ]
+    )
+
+    if not session:
+        return {
+            "message": "No interview history found"
+        }
+
+    history = session.get(
+        "history",
+        []
+    )
+
+    if len(history) == 0:
+        return {
+            "message": "No interview attempts found"
+        }
+
+    history_text = ""
+
+    for item in history:
+
+        history_text += f"""
+
+Question:
+{item['question']}
+
+Answer:
+{item['answer']}
+
+Score:
+{item['score']}/10
+
+"""
+
+    prompt = f"""
+You are an expert interview coach.
+
+Analyze the interview performance below.
+
+Interview History:
+
+{history_text}
+
+Provide:
+
+1. Strong Topics
+2. Weak Topics
+3. Key Mistakes
+4. Recommendations
+5. Personalized Study Plan
+
+Keep the response concise and structured.
+"""
+
+    analysis = llm.invoke(
+        prompt
+    )
+
+    questions_answered = session.get(
+        "questions_answered",
+        0
+    )
+
+    total_score = session.get(
+        "total_score",
+        0
+    )
+
+    average_score = 0
+
+    if questions_answered > 0:
+        average_score = (
+            total_score /
+            questions_answered
+        )
+
+    return {
+        "questions_answered":
+        questions_answered,
+
+        "total_score":
+        total_score,
+
+        "average_score":
+        round(
+            average_score,
+            2
+        ),
+
+        "analysis":
+        analysis.content
     }
