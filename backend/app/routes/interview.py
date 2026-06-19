@@ -101,15 +101,17 @@ def submit_answer(
         }
     )
 
+    if not session:
+        return {
+            "message": "No active interview session found"
+        }
+    
     if session["questions_answered"] >= 5:
         return {
             "message": "Interview completed. Please end the interview."
         }
 
-    if not session:
-        return {
-            "message": "No active interview session found"
-        }
+    
 
     question = session["current_question"]
 
@@ -470,4 +472,110 @@ Keep the response concise and structured.
 
         "analysis":
         analysis.content
+    }
+
+@router.get("/study-plan")
+def generate_study_plan(
+    current_user=Depends(get_current_user)
+):
+
+    session = interviews_collection.find_one(
+        {
+            "user_email": current_user["email"]
+        },
+        sort=[("_id", -1)]
+    )
+
+    if not session:
+        return {
+            "message": "No interview history found"
+        }
+
+    history = session.get(
+        "history",
+        []
+    )
+
+    if len(history) == 0:
+        return {
+            "message": "No interview attempts found"
+        }
+
+    history_text = ""
+
+    for item in history:
+
+        history_text += f"""
+Question:
+{item['question']}
+
+Answer:
+{item['answer']}
+
+Score:
+{item['score']}/10
+
+"""
+
+    average_score = 0
+
+    questions_answered = session.get(
+        "questions_answered",
+        0
+    )
+
+    total_score = session.get(
+        "total_score",
+        0
+    )
+
+    if questions_answered > 0:
+
+        average_score = (
+            total_score /
+            questions_answered
+        )
+
+    prompt = f"""
+You are an expert interview coach.
+
+Analyze the interview history below.
+
+Interview History:
+{history_text}
+
+Average Score:
+{average_score}
+
+Generate:
+
+1. Strong Topics
+2. Weak Topics
+3. Important Concepts To Revise
+4. 7-Day Study Plan
+5. Recommended Interview Practice Areas
+
+Keep the response concise and structured.
+"""
+
+    study_plan = llm.invoke(
+        prompt
+    )
+
+    return {
+
+        "questions_answered":
+        questions_answered,
+
+        "total_score":
+        total_score,
+
+        "average_score":
+        round(
+            average_score,
+            2
+        ),
+
+        "study_plan":
+        study_plan.content
     }
