@@ -579,3 +579,75 @@ Keep the response concise and structured.
         "study_plan":
         study_plan.content
     }
+
+
+@router.get("/practice")
+def generate_practice_questions(
+    current_user=Depends(get_current_user)
+):
+
+    session = interviews_collection.find_one(
+        {
+            "user_email": current_user["email"]
+        },
+        sort=[("_id", -1)]
+    )
+
+    if not session:
+        return {
+            "message": "No interview history found"
+        }
+
+    history = session.get(
+        "history",
+        []
+    )
+
+    if len(history) == 0:
+        return {
+            "message": "No interview attempts found"
+        }
+
+    history_text = ""
+
+    for item in history:
+
+        history_text += f"""
+
+Question:
+{item['question']}
+
+Answer:
+{item['answer']}
+
+Score:
+{item['score']}/10
+
+"""
+
+    prompt = f"""
+You are an expert interview coach.
+
+Analyze this interview history.
+
+{history_text}
+
+Identify the weakest topic.
+
+Generate:
+
+1. Weak Topic
+2. 10 Practice Questions
+
+Return in a structured format.
+"""
+
+    response = llm.invoke(
+        prompt
+    )
+
+    return {
+        "practice":
+        response.content
+    }
+

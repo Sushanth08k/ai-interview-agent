@@ -5,7 +5,9 @@ from app.routes.notes import router as notes_router
 from app.routes.ask import router as ask_router
 from app.routes.question_generator import router as question_router
 from app.routes.interview import router as interview_router
-
+from app.routes.learning import (
+    router as learning_router
+)
 
 app = FastAPI()
 
@@ -49,4 +51,10 @@ app.include_router(
     interview_router,
     prefix="/interview",
     tags=["Interview"]
+)
+
+app.include_router(
+    learning_router,
+    prefix="/learning",
+    tags=["Learning"]
 )

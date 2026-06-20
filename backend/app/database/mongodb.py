@@ -17,3 +17,7 @@ users_collection = db["users"]
 notes_collection = db["notes"]
 
 interviews_collection = db["interviews"]
+
+learning_progress_collection = db[
+    "learning_progress"
+]
