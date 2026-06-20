@@ -2,78 +2,97 @@
 
 ## Overview
 
-AI Interview Preparation Agent is an intelligent interview preparation platform that helps users learn and revise technical subjects using their own study materials.
+AI Interview Preparation Agent is an Agentic AI-powered platform that helps students prepare for technical interviews using their own study materials.
 
-Users can upload PDF notes, ask questions, generate interview questions, and participate in AI-driven mock interviews powered by Retrieval-Augmented Generation (RAG).
+Users can upload PDFs, ask questions, generate interview questions, participate in mock interviews, receive AI-based evaluations, analyze their strengths and weaknesses, and obtain personalized study plans.
 
-The system combines FastAPI, MongoDB, ChromaDB, and Gemini to create a personalized interview preparation experience.
+The system combines Retrieval-Augmented Generation (RAG), Vector Search, Large Language Models, and Agentic Workflows to create a personalized interview coaching experience.
 
 ---
 
 ## Features
 
-### Authentication
+### Authentication Agent
 
 * User Registration
 * User Login
 * JWT Authentication
-* Protected API Endpoints
+* Protected Routes
+* User-Specific Data Isolation
 
-### Knowledge Base
+---
 
-* PDF Upload
-* Automatic Text Extraction
-* Intelligent Text Chunking
-* User-Specific Document Ownership
+### Knowledge Base Agent
 
-### RAG Pipeline
+* Upload Technical PDFs
+* Extract Text from PDFs
+* Automatic Text Chunking
+* Duplicate Upload Prevention
+* User-Specific Document Storage
+
+---
+
+### Retrieval-Augmented Generation (RAG)
 
 * Semantic Search using ChromaDB
-* Vector Embeddings
-* Context Retrieval
-* AI-Powered Question Answering
+* Context-Aware Question Answering
+* Personalized Responses based on Uploaded Notes
 
-### Interview Preparation
+---
 
-* Generate Easy, Medium, and Hard Interview Questions
-* Topic-Based Question Generation
-* Personalized Knowledge Retrieval
+### Interview Agent
 
-### Interview Sessions
+* Topic-Based Interview Generation
+* Dynamic Interview Sessions
+* Continuous Question Flow
+* Interview State Management
+* Question Tracking
 
-* Start AI Mock Interviews
-* Session Tracking
-* User-Specific Interview History
+---
+
+### Evaluation Agent
+
+* AI-Based Answer Evaluation
+* Interview-Style Feedback
+* Strength Analysis
+* Weakness Detection
+* Scoring Mechanism
+
+---
+
+### Learning Agent
+
+* Interview Analytics
+* Personalized Study Plans
+* Practice Question Generation
+* Learning Progress Tracking
+* Re-Interview Recommendations
 
 ---
 
 ## System Architecture
 
-User Uploads PDF
-
+User
 ↓
-
-PDF Text Extraction
-
+Authentication
 ↓
-
-Text Chunking
-
+Upload Notes
 ↓
-
-ChromaDB Vector Storage
-
+PDF Processing
 ↓
-
-Semantic Retrieval
-
+Chunking
 ↓
-
-Gemini LLM
-
+ChromaDB
 ↓
-
-Question Answering / Interview Question Generation
+Semantic Search
+↓
+RAG Pipeline
+↓
+Interview Agent
+↓
+Evaluation Agent
+↓
+Learning Agent
 
 ---
 
@@ -81,8 +100,9 @@ Question Answering / Interview Question Generation
 
 ### Backend
 
-* FastAPI
 * Python
+* FastAPI
+* JWT Authentication
 
 ### Database
 
@@ -92,18 +112,12 @@ Question Answering / Interview Question Generation
 
 * ChromaDB
 
-### AI & RAG
+### AI / LLM
 
-* Gemini 2.5 Flash
+* Google Gemini
 * LangChain
-* Sentence Transformers
 
-### Authentication
-
-* JWT
-* Passlib
-
-### PDF Processing
+### Document Processing
 
 * PyPDF
 
@@ -113,57 +127,37 @@ Question Answering / Interview Question Generation
 
 backend/
 
-├── app/
+app/
 
-│   ├── ai/
+├── ai/
 
-│   │   └── llm.py
+├── database/
 
-│   ├── database/
+├── dependencies/
 
-│   │   └── mongodb.py
+├── models/
 
-│   ├── dependencies/
+├── rag/
 
-│   │   └── auth_dependency.py
+├── routes/
 
-│   ├── rag/
+│ ├── auth.py
 
-│   │   ├── chunking.py
+│ ├── notes.py
 
-│   │   └── vector_store.py
+│ ├── ask.py
 
-│   ├── routes/
+│ ├── interview.py
 
-│   │   ├── auth.py
+│ └── learning.py
 
-│   │   ├── notes.py
+├── utils/
 
-│   │   ├── search.py
-
-│   │   ├── ask.py
-
-│   │   ├── question_generator.py
-
-│   │   └── interview.py
-
-│   ├── utils/
-
-│   └── main.py
-
-│
-
-├── chroma_db/
-
-├── temp/
-
-├── .env
-
-└── requirements.txt
+└── main.py
 
 ---
 
-## API Endpoints
+## Implemented APIs
 
 ### Authentication
 
@@ -185,49 +179,94 @@ POST /notes/upload
 
 POST /search
 
----
-
-### Question Answering
-
 POST /ask
 
 ---
 
-### Interview Question Generation
-
-POST /generate-questions
-
----
-
-### Interview Session
+### Interview
 
 POST /interview/start
 
+POST /interview/answer
+
+POST /interview/end
+
+GET /interview/analytics
+
+GET /interview/study-plan
+
+GET /interview/practice
+
+GET /interview/recommendation
+
 ---
 
-## Current Workflow
+### Learning
 
-1. User uploads PDF notes.
-2. Text is extracted and chunked.
-3. Chunks are converted into vector embeddings.
-4. Chunks are stored in ChromaDB.
-5. Metadata is stored in MongoDB.
-6. User asks questions or generates interview questions.
-7. Relevant chunks are retrieved.
-8. Gemini generates responses using retrieved context.
+POST /learning/complete
+
+GET /learning/progress
+
+---
+
+## Current Agent Status
+
+| Agent            | Status          |
+| ---------------- | --------------- |
+| Interview Agent  | Completed       |
+| Evaluation Agent | Completed       |
+| Learning Agent   | Completed (MVP) |
+| Resume Agent     | Planned         |
+| Career Agent     | Planned         |
 
 ---
 
 ## Future Enhancements
 
-* Interview Answer Evaluation
-* AI Feedback Generation
-* Weak Topic Detection
-* Personalized Learning Plans
-* Multi-Agent Workflows using LangGraph
-* Resume-Based Interview Preparation
-* Voice-Based Mock Interviews
-* Performance Analytics Dashboard
+### Resume Agent
+
+* Resume Upload
+* Resume Analysis
+* ATS Score
+* Skill Gap Detection
+
+### Career Agent
+
+* Resume vs Job Description Matching
+* Missing Skills Identification
+* Career Recommendations
+
+### Frontend
+
+* React Dashboard
+* Interview Interface
+* Analytics Dashboard
+* Study Plan Dashboard
+* Learning Progress Dashboard
+
+### Advanced Agentic AI
+
+* Multi-Agent Orchestration
+* LangGraph Integration
+* Adaptive Interview Difficulty
+* Voice-Based Interviews
+
+---
+
+## Learning Outcomes
+
+This project demonstrates:
+
+* Agentic AI Workflows
+* Retrieval-Augmented Generation (RAG)
+* Vector Databases
+* LLM Integration
+* JWT Authentication
+* FastAPI Development
+* MongoDB Integration
+* ChromaDB Integration
+* AI-Powered Interview Evaluation
+* Personalized Learning Systems
 
 ---
 
@@ -238,3 +277,5 @@ Sushanth Reddy
 B.Tech Information Technology
 
 Chaitanya Bharathi Institute of Technology (CBIT)
+
+Hyderabad, India
