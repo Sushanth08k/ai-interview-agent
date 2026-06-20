@@ -273,7 +273,6 @@ This project demonstrates:
 ## Author
 
 Sushanth Reddy
-
 B.Tech Information Technology
 
 Chaitanya Bharathi Institute of Technology (CBIT)

@@ -8,8 +8,23 @@ from app.routes.interview import router as interview_router
 from app.routes.learning import (
     router as learning_router
 )
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+
+    allow_credentials=True,
+
+    allow_methods=["*"],
+
+    allow_headers=["*"]
+)
 
 app.include_router(
     auth_router,
