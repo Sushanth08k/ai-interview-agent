@@ -9,6 +9,10 @@ import {
 } from "react-router-dom";
 import Interview from "./pages/Interview";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Analytics from "./pages/Analytics";
+import StudyPlan from "./pages/StudyPlan";
+
+
 function App() {
 
   return (
@@ -50,6 +54,25 @@ function App() {
             element={
                 <ProtectedRoute>
                     <Interview />
+                </ProtectedRoute>
+            }
+        />
+
+        <Route
+          path="/analytics"
+          element={
+
+            <ProtectedRoute>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+            path="/study-plan"
+            element={
+                <ProtectedRoute>
+                    <StudyPlan />
                 </ProtectedRoute>
             }
         />
