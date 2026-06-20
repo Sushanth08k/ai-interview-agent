@@ -7,6 +7,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+import Interview from "./pages/Interview";
 import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
 
@@ -42,6 +43,15 @@ function App() {
                   <UploadNotes />
               </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/interview"
+            element={
+                <ProtectedRoute>
+                    <Interview />
+                </ProtectedRoute>
+            }
         />
 
       </Routes>
