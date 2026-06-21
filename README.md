@@ -1,64 +1,48 @@
-# AI Interview Preparation Agent
+# AI Interview Coach
 
-## Overview
-
-AI Interview Preparation Agent is an Agentic AI-powered platform that helps students prepare for technical interviews using their own study materials.
-
-Users can upload PDFs, ask questions, generate interview questions, participate in mock interviews, receive AI-based evaluations, analyze their strengths and weaknesses, and obtain personalized study plans.
-
-The system combines Retrieval-Augmented Generation (RAG), Vector Search, Large Language Models, and Agentic Workflows to create a personalized interview coaching experience.
+An AI-powered interview preparation platform that helps students learn from their own notes, practice mock interviews, receive AI-generated feedback, and follow personalized learning plans.
 
 ---
 
 ## Features
 
-### Authentication Agent
+### Authentication
 
 * User Registration
 * User Login
 * JWT Authentication
 * Protected Routes
-* User-Specific Data Isolation
+* User-Specific Data Access
 
----
+### Knowledge Base
 
-### Knowledge Base Agent
-
-* Upload Technical PDFs
-* Extract Text from PDFs
-* Automatic Text Chunking
+* PDF Upload
+* PDF Text Extraction
+* Automatic Chunking
 * Duplicate Upload Prevention
-* User-Specific Document Storage
-
----
+* User-Specific Note Storage
 
 ### Retrieval-Augmented Generation (RAG)
 
 * Semantic Search using ChromaDB
 * Context-Aware Question Answering
-* Personalized Responses based on Uploaded Notes
-
----
+* Personalized Responses from Uploaded Notes
 
 ### Interview Agent
 
 * Topic-Based Interview Generation
-* Dynamic Interview Sessions
-* Continuous Question Flow
-* Interview State Management
-* Question Tracking
-
----
+* Dynamic Question Generation
+* Continuous Interview Sessions
+* Interview Progress Tracking
+* Session Management
 
 ### Evaluation Agent
 
 * AI-Based Answer Evaluation
-* Interview-Style Feedback
+* Interview Feedback
 * Strength Analysis
-* Weakness Detection
-* Scoring Mechanism
-
----
+* Weakness Analysis
+* Performance Scoring
 
 ### Learning Agent
 
@@ -70,146 +54,206 @@ The system combines Retrieval-Augmented Generation (RAG), Vector Search, Large L
 
 ---
 
-## System Architecture
+# System Architecture
 
 User
 ↓
-Authentication
+React Frontend
 ↓
-Upload Notes
+FastAPI Backend
+↓
+Authentication Layer
 ↓
 PDF Processing
 ↓
-Chunking
+ChromaDB Vector Store
 ↓
-ChromaDB
+Gemini LLM
 ↓
-Semantic Search
-↓
-RAG Pipeline
-↓
+Agent Layer
+
 Interview Agent
-↓
+
 Evaluation Agent
-↓
+
 Learning Agent
 
 ---
 
-## Tech Stack
+# Tech Stack
 
-### Backend
+## Frontend
 
-* Python
+* React
+* Vite
+* React Router DOM
+* Axios
+
+## Backend
+
 * FastAPI
-* JWT Authentication
+* Python
 
-### Database
+## Database
 
 * MongoDB
 
-### Vector Database
+## Vector Database
 
 * ChromaDB
 
-### AI / LLM
+## AI / LLM
 
 * Google Gemini
 * LangChain
 
-### Document Processing
+## Document Processing
 
 * PyPDF
 
 ---
 
-## Project Structure
+# Project Structure
 
-backend/
+```text
+AI-Interview-Coach/
 
-app/
-
-├── ai/
-
-├── database/
-
-├── dependencies/
-
-├── models/
-
-├── rag/
-
-├── routes/
-
-│ ├── auth.py
-
-│ ├── notes.py
-
-│ ├── ask.py
-
-│ ├── interview.py
-
-│ └── learning.py
-
-├── utils/
-
-└── main.py
+├── backend/
+│
+│   ├── app/
+│   │
+│   │   ├── ai/
+│   │   ├── database/
+│   │   ├── dependencies/
+│   │   ├── models/
+│   │   ├── rag/
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   ├── notes.py
+│   │   │   ├── ask.py
+│   │   │   ├── interview.py
+│   │   │   └── learning.py
+│   │   ├── utils/
+│   │   └── main.py
+│
+│   └── requirements.txt
+│
+├── frontend/
+│
+│   ├── src/
+│   │
+│   │   ├── components/
+│   │   │   └── ProtectedRoute.jsx
+│   │
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │
+│   │   ├── pages/
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── UploadNotes.jsx
+│   │   │   ├── Interview.jsx
+│   │   │   ├── Analytics.jsx
+│   │   │   └── StudyPlan.jsx
+│   │
+│   │   ├── services/
+│   │   │   └── api.js
+│   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│
+│   └── package.json
+│
+└── README.md
+```
 
 ---
 
-## Implemented APIs
+# Backend APIs
+
+## Authentication
+
+```http
+POST /auth/register
+POST /auth/login
+GET  /auth/me
+```
+
+## Notes
+
+```http
+POST /notes/upload
+```
+
+## RAG
+
+```http
+POST /search
+POST /ask
+```
+
+## Interview
+
+```http
+POST /interview/start
+POST /interview/answer
+POST /interview/end
+
+GET  /interview/analytics
+GET  /interview/study-plan
+GET  /interview/practice
+GET  /interview/recommendation
+```
+
+## Learning
+
+```http
+POST /learning/complete
+GET  /learning/progress
+```
+
+---
+
+# Frontend Pages
 
 ### Authentication
 
-POST /auth/register
+* Login
+* Register
 
-POST /auth/login
+### Dashboard
 
-GET /auth/me
-
----
-
-### Notes
-
-POST /notes/upload
-
----
-
-### Search
-
-POST /search
-
-POST /ask
-
----
+* Upload Notes
+* Mock Interview
+* Analytics
+* Study Plan
+* Logout
 
 ### Interview
 
-POST /interview/start
+* Start Interview
+* Submit Answers
+* Receive Feedback
+* Track Scores
+* End Interview
 
-POST /interview/answer
+### Analytics
 
-POST /interview/end
+* Questions Answered
+* Total Score
+* Average Score
+* AI Performance Analysis
 
-GET /interview/analytics
+### Study Plan
 
-GET /interview/study-plan
-
-GET /interview/practice
-
-GET /interview/recommendation
-
----
-
-### Learning
-
-POST /learning/complete
-
-GET /learning/progress
+* Personalized Learning Plan
+* Weak Topic Identification
+* Recommended Revision Areas
 
 ---
 
-## Current Agent Status
+# Current Agent Status
 
 | Agent            | Status          |
 | ---------------- | --------------- |
@@ -221,58 +265,64 @@ GET /learning/progress
 
 ---
 
-## Future Enhancements
+# Future Roadmap
 
-### Resume Agent
+## Resume Agent
 
 * Resume Upload
+* ATS Score Generation
 * Resume Analysis
-* ATS Score
 * Skill Gap Detection
 
-### Career Agent
+## Career Agent
 
 * Resume vs Job Description Matching
-* Missing Skills Identification
+* Missing Skill Identification
 * Career Recommendations
 
-### Frontend
+## Multi-Agent Architecture
 
-* React Dashboard
-* Interview Interface
-* Analytics Dashboard
-* Study Plan Dashboard
-* Learning Progress Dashboard
+Planned LangGraph Integration:
 
-### Advanced Agentic AI
+* Supervisor Agent
+* Interview Agent
+* Evaluation Agent
+* Learning Agent
+* Resume Agent
+* Career Agent
 
-* Multi-Agent Orchestration
-* LangGraph Integration
-* Adaptive Interview Difficulty
-* Voice-Based Interviews
+## Frontend Enhancements
+
+* Dark Theme
+* Dashboard Cards
+* Charts & Analytics
+* Progress Visualization
+* Responsive Design
 
 ---
 
-## Learning Outcomes
+# Learning Outcomes
 
 This project demonstrates:
 
-* Agentic AI Workflows
 * Retrieval-Augmented Generation (RAG)
+* Agentic AI Design
+* Semantic Search
 * Vector Databases
-* LLM Integration
 * JWT Authentication
 * FastAPI Development
+* React Frontend Development
 * MongoDB Integration
 * ChromaDB Integration
-* AI-Powered Interview Evaluation
-* Personalized Learning Systems
+* Gemini LLM Integration
+* AI-Powered Interview Coaching
 
 ---
 
-## Author
+# Author
 
 Sushanth Reddy
+
 B.Tech Information Technology
 
 Chaitanya Bharathi Institute of Technology (CBIT)
