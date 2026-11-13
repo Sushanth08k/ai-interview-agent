@@ -19,12 +19,15 @@ def get_current_user(
         if payload and isinstance(payload, dict) and "email" in payload:
             return payload
 
-    first_user = users_collection.find_one({}, sort=[("_id", 1)])
-    if first_user:
-        return {
-            "email": first_user.get("email", DEFAULT_USER["email"]),
-            "name": first_user.get("name", DEFAULT_USER["name"]),
-            "target_role": first_user.get("target_role", DEFAULT_USER["target_role"])
-        }
+    try:
+        first_user = users_collection.find_one({}, sort=[("_id", 1)])
+        if first_user:
+            return {
+                "email": first_user.get("email", DEFAULT_USER["email"]),
+                "name": first_user.get("name", DEFAULT_USER["name"]),
+                "target_role": first_user.get("target_role", DEFAULT_USER["target_role"])
+            }
+    except Exception as e:
+        print(f"MongoDB connection error in get_current_user: {e}")
 
     return DEFAULT_USER

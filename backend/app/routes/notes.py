@@ -35,12 +35,19 @@ async def upload_note(
             detail="Only PDF files are supported"
         )
 
-    existing_note = notes_collection.find_one(
-        {
-            "user_email": current_user["email"],
-            "filename": file.filename
-        }
-    )
+    try:
+        existing_note = notes_collection.find_one(
+            {
+                "user_email": current_user["email"],
+                "filename": file.filename
+            }
+        )
+    except Exception as e:
+        print(f"MongoDB connection error: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="Database connection error. Please check your MongoDB connection and network access."
+        )
 
     if existing_note:
         return {

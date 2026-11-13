@@ -656,13 +656,16 @@ Return in a structured format.
 def get_recommendation(
     current_user=Depends(get_current_user)
 ):
-
-    session = interviews_collection.find_one(
-        {
-            "user_email": current_user["email"]
-        },
-        sort=[("_id", -1)]
-    )
+    try:
+        session = interviews_collection.find_one(
+            {
+                "user_email": current_user["email"]
+            },
+            sort=[("_id", -1)]
+        )
+    except Exception as e:
+        print(f"MongoDB error in get_recommendation: {e}")
+        return {"message": "No interview history found"}
 
     if not session:
         return {

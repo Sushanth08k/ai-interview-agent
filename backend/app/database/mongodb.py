@@ -10,7 +10,7 @@ load_dotenv()
 mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 database_name = os.getenv("DATABASE_NAME", "ai_interview_agent")
 
-client = MongoClient(mongo_uri)
+client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
 db = client[database_name]
 
 users_collection = db["users"]
