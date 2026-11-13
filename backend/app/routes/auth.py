@@ -1,5 +1,4 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.dependencies.auth_dependency import get_current_user
 from app.models.user import UserRegister, UserLogin
 from app.database.mongodb import users_collection
@@ -20,10 +19,10 @@ def register(user: UserRegister):
     )
 
     if existing_user:
-        return {
-            "message":
-            "User already exists"
-        }
+        raise HTTPException(
+            status_code=400,
+            detail="User already exists"
+        )
 
     user_data = {
         "name": user.name,
@@ -51,10 +50,10 @@ def login(user: UserLogin):
     )
 
     if not db_user:
-        return {
-            "message":
-            "Invalid Credentials"
-        }
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
 
     valid = verify_password(
         user.password,
@@ -62,10 +61,10 @@ def login(user: UserLogin):
     )
 
     if not valid:
-        return {
-            "message":
-            "Invalid Credentials"
-        }
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
 
     token = create_access_token(
         {

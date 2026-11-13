@@ -1,7 +1,8 @@
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
+import os
 
-SECRET_KEY = "supersecretkey"
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 ALGORITHM = "HS256"
 
 

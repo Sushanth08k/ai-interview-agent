@@ -7,7 +7,7 @@ export default function ProtectedRoute({
     const token =
         localStorage.getItem("token");
 
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
         return <Navigate to="/" />;
     }
 

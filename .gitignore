@@ -5,9 +5,11 @@ __pycache__/
 
 # Environment Variables
 .env
+.env.local
 
 # Uploads
 uploads/
+temp/
 
 # IDE
 .vscode/
@@ -22,3 +24,7 @@ chroma_db/
 
 # Logs
 *.log
+
+# Node
+node_modules/
+dist/
